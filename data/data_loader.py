@@ -286,12 +286,12 @@ class Dataset_Custom(Dataset):
         
     def get_split_start_dates(self):
         start_dates = {
-            'train': self.df_raw['date'].iloc[self.border1s[0]],
-            'val': self.df_raw['date'].iloc[self.border1s[1]],
-            'test': self.df_raw['date'].iloc[self.border1s[2]]
+            'train': df_raw['date'].iloc[border1s[0]],
+            'val': df_raw['date'].iloc[border1s[1]],
+            'test': df_raw['date'].iloc[border1s[2]]
         }
         return start_dates
-
+        
 class Dataset_Pred(Dataset):
     def __init__(self, root_path, flag='pred', size=None, 
                  features='S', data_path='ETTh1.csv', 
