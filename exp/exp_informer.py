@@ -92,6 +92,8 @@ class Exp_Informer(Exp_Basic):
             freq=freq,
             cols=args.cols
         )
+        start_dates = data_set.get_split_start_dates()
+        print("Start Dates of the splits:", start_dates)
         print(flag, len(data_set))
         data_loader = DataLoader(
             data_set,
