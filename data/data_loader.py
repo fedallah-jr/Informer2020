@@ -184,7 +184,6 @@ class Dataset_ETT_minute(Dataset):
     def inverse_transform(self, data):
         return self.scaler.inverse_transform(data)
 
-
 class Dataset_Custom(Dataset):
     def __init__(self, root_path, flag='train', size=None, 
                  features='S', data_path='ETTh1.csv', 
@@ -219,6 +218,7 @@ class Dataset_Custom(Dataset):
         self.scaler = StandardScaler()
         df_raw = pd.read_csv(os.path.join(self.root_path,
                                           self.data_path))
+        self.df_raw = df_raw
         '''
         df_raw.columns: ['date', ...(other features), target feature]
         '''
@@ -233,10 +233,10 @@ class Dataset_Custom(Dataset):
         num_train = int(len(df_raw)*0.7)
         num_test = int(len(df_raw)*0.2)
         num_vali = len(df_raw) - num_train - num_test
-        border1s = [0, num_train-self.seq_len, len(df_raw)-num_test-self.seq_len]
-        border2s = [num_train, num_train+num_vali, len(df_raw)]
-        border1 = border1s[self.set_type]
-        border2 = border2s[self.set_type]
+        self.border1s = [0, num_train-self.seq_len, len(df_raw)-num_test-self.seq_len]
+        self.border2s = [num_train, num_train+num_vali, len(df_raw)]
+        border1 = self.border1s[self.set_type]
+        border2 = self.border2s[self.set_type]
         
         if self.features=='M' or self.features=='MS':
             cols_data = df_raw.columns[1:]
@@ -286,9 +286,9 @@ class Dataset_Custom(Dataset):
         
     def get_split_start_dates(self):
         start_dates = {
-            'train': df_raw['date'].iloc[border1s[0]],
-            'val': df_raw['date'].iloc[border1s[1]],
-            'test': df_raw['date'].iloc[border1s[2]]
+            'train': self.df_raw['date'].iloc[self.border1s[0]],
+            'val': self.df_raw['date'].iloc[self.border1s[1]],
+            'test': self.df_raw['date'].iloc[self.border1s[2]]
         }
         return start_dates
         
