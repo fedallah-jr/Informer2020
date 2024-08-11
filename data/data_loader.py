@@ -377,3 +377,11 @@ class Dataset_Pred(Dataset):
 
     def inverse_transform(self, data):
         return self.scaler.inverse_transform(data)
+
+    def get_split_start_dates(self):
+        start_dates = {
+            'train': self.df_raw['date'].iloc[self.border1s[0]],
+            'val': self.df_raw['date'].iloc[self.border1s[1]],
+            'test': self.df_raw['date'].iloc[self.border1s[2]]
+        }
+        return start_dates
