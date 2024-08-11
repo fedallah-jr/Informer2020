@@ -374,33 +374,33 @@ class Dataset_Pred(Dataset):
             self.latest_close_scaled = None
             self.latest_close = df_data.values[-1]  # Already in original scale
 
-def __getitem__(self, index):
-    s_begin = index
-    s_end = s_begin + self.seq_len
-    r_begin = s_end - self.label_len
-    r_end = r_begin + self.label_len + self.pred_len
-
-    seq_x = self.data_x[s_begin:s_end]
+    def __getitem__(self, index):
+        s_begin = index
+        s_end = s_begin + self.seq_len
+        r_begin = s_end - self.label_len
+        r_end = r_begin + self.label_len + self.pred_len
     
-    if self.inverse:
-        seq_y = self.data_x[r_begin:r_begin + self.label_len]
-    else:
-        seq_y = self.data_y[r_begin:r_begin + self.label_len]
+        seq_x = self.data_x[s_begin:s_end]
+        
+        if self.inverse:
+            seq_y = self.data_x[r_begin:r_begin + self.label_len]
+        else:
+            seq_y = self.data_y[r_begin:r_begin + self.label_len]
+        
+        seq_x_mark = self.data_stamp[s_begin:s_end]
+        seq_y_mark = self.data_stamp[r_begin:r_end]
     
-    seq_x_mark = self.data_stamp[s_begin:s_end]
-    seq_y_mark = self.data_stamp[r_begin:r_end]
-
-    # Get the latest Close price in the original scale
-    if self.scale:
-        latest_close_real_value = self.inverse_transform(self.latest_close_scaled)[0]
-    else:
-        latest_close_real_value = self.latest_close[0]  # No scaling applied, so use directly
-
-    return seq_x, seq_y, seq_x_mark, seq_y_mark, latest_close_real_value
+        # Get the latest Close price in the original scale
+        if self.scale:
+            latest_close_real_value = self.inverse_transform(self.latest_close_scaled)[0]
+        else:
+            latest_close_real_value = self.latest_close[0]  # No scaling applied, so use directly
     
-    def __len__(self):
-        return len(self.data_x) - self.seq_len + 1
-
-    def inverse_transform(self, data):
-        return self.scaler.inverse_transform(data)
+        return seq_x, seq_y, seq_x_mark, seq_y_mark, latest_close_real_value
+        
+        def __len__(self):
+            return len(self.data_x) - self.seq_len + 1
+    
+        def inverse_transform(self, data):
+            return self.scaler.inverse_transform(data)
 
